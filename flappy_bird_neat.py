@@ -401,9 +401,9 @@ def eval_genomes(genomes, config): # Bepaald hoever de generaties vogels komen i
         draw_window(WIN, birds, pipes, base, score, gen, pipe_ind) #Laat genoemde dingen zien 
        
         # break if score gets large enough
-        '''if score > 20:
-            pickle.dump(nets[0],open("best.pickle", "wb"))
-            break'''
+        if score > 25:
+            pickle.dump(nets[0],open("best.pickle", "wb")) # hierdoor wordt na score 25 de game gespeeld door het beste vogeltje.
+            break
 
 
 def run(config_file):
