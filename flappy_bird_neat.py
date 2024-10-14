@@ -134,8 +134,8 @@ class Pipe():
     """
     represents a pipe object
     """
-    GAP = 160               #Ruimte tussen bovenste en onderste buis
-    VEL = 5                 #Snelheid van de vogel
+    GAP = 160               # 1 Ruimte tussen bovenste en onderste buis
+    VEL = 5                 # 2 Snelheid van de vogel
 
     def __init__(self, x):
         """
@@ -306,7 +306,7 @@ def draw_window(win, birds, pipes, base, score, gen, pipe_ind):
     pygame.display.update()
 
 
-def eval_genomes(genomes, config): # Bepaald hoever de generaties vogels komen in het spelletje.
+def eval_genomes(genomes, config): # 3 Bepaald hoever de generaties vogels komen in het spelletje.
     """
     runs the simulation of the current population of
     birds and sets their fitness based on the distance they
@@ -322,9 +322,9 @@ def eval_genomes(genomes, config): # Bepaald hoever de generaties vogels komen i
     nets = []
     birds = [] # Aanpassingen om ervoor te zorgen dat er meerdere vogels tegelijk runnen( efficiënter ) tot regel 401
     ge = []
-    for genome_id, genome in genomes: # creeerd neuraal netwerk en houdt progressie van vogeltjes( genomes ) bij
-        genome.fitness = 0  # start with fitness level of 0
-        net = neat.nn.FeedForwardNetwork.create(genome, config)               # Bijhouden fitness en deze kunnen aanpassen hoe we dat willen geldt voor regels 325 t/m 330
+    for genome_id, genome in genomes: #  4 creeerd neuraal netwerk en houdt progressie van vogeltjes( genomes ) bij
+        genome.fitness = 0  #start with fitness level of 0
+        net = neat.nn.FeedForwardNetwork.create(genome, config)               # 5 Bijhouden fitness en deze kunnen aanpassen hoe we dat willen geldt voor regels 325 t/m 330
         nets.append(net)
         birds.append(Bird(230,350))
         ge.append(genome) 
@@ -337,7 +337,7 @@ def eval_genomes(genomes, config): # Bepaald hoever de generaties vogels komen i
 
     run = True
     while run and len(birds) > 0:
-        clock.tick(100) #Frames per seconde
+        clock.tick(100) # 6 Frames per seconde
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -348,14 +348,14 @@ def eval_genomes(genomes, config): # Bepaald hoever de generaties vogels komen i
 
         pipe_ind = 0
         if len(birds) > 0:
-            if len(pipes) > 1 and birds[0].x > pipes[0].x + pipes[0].PIPE_TOP.get_width():  # Als je voorbij een buis bent kijkt de vogel naar de volgende # determine whether to use the first or second
+            if len(pipes) > 1 and birds[0].x > pipes[0].x + pipes[0].PIPE_TOP.get_width():  # 7 Als je voorbij een buis bent kijkt de vogel naar de volgende # determine whether to use the first or second
                 pipe_ind = 1                                                                 # pipe on the screen for neural network input
 
-        for x, bird in enumerate(birds):  # Zorgt ervoor dat vogels juiste pad volgen en niet tegen het plafond aan vliegen. # give each bird a fitness of 0.1 for each frame it stays alive
+        for x, bird in enumerate(birds):  # 8 Zorgt ervoor dat vogels juiste pad volgen en niet tegen het plafond aan vliegen. # give each bird a fitness of 0.1 for each frame it stays alive
             ge[x].fitness += 0.1
             bird.move()
 
-            # Zorgt ervoor dat buizen de juiste hoogte hebben en binnen het scherm blijven
+            # 9 Zorgt ervoor dat buizen de juiste hoogte hebben en binnen het scherm blijven
             output = nets[birds.index(bird)].activate((bird.y, abs(bird.y - pipes[pipe_ind].height), abs(bird.y - pipes[pipe_ind].bottom)))
 
             if output[0] > 0.5:  # we use a tanh activation function so result will be between -1 and 1. if over 0.5 jump
@@ -368,7 +368,7 @@ def eval_genomes(genomes, config): # Bepaald hoever de generaties vogels komen i
         for pipe in pipes:
             pipe.move()
             # check for collision
-            for bird in birds: # Als vogels dood gaan niet meer nodig.
+            for bird in birds: # 10 Als vogels dood gaan niet meer nodig.
                 if pipe.collide(bird, win):
                     ge[birds.index(bird)].fitness -= 1
                     nets.pop(birds.index(bird))
@@ -393,16 +393,16 @@ def eval_genomes(genomes, config): # Bepaald hoever de generaties vogels komen i
             pipes.remove(r)
 
         for bird in birds:
-            if bird.y + bird.img.get_height() - 10 >= FLOOR or bird.y < -50: # zorgt ervoor dat vogels niet buiten frame raken
+            if bird.y + bird.img.get_height() - 10 >= FLOOR or bird.y < -50: # 11 zorgt ervoor dat vogels niet buiten frame raken
                 nets.pop(birds.index(bird))
                 ge.pop(birds.index(bird))
                 birds.pop(birds.index(bird))
 
-        draw_window(WIN, birds, pipes, base, score, gen, pipe_ind) #Laat genoemde dingen zien 
+        draw_window(WIN, birds, pipes, base, score, gen, pipe_ind) # 12 Laat genoemde dingen zien 
        
         # break if score gets large enough
         if score > 25:
-            pickle.dump(nets[0],open("best.pickle", "wb")) # hierdoor wordt na score 25 de game gespeeld door het beste vogeltje.
+            pickle.dump(nets[0],open("best.pickle", "wb")) # 13 hierdoor wordt na score 25 de game gespeeld door het beste vogeltje.
             break
 
 
@@ -417,10 +417,10 @@ def run(config_file):
                          config_file)
 
     # Create the population, which is the top-level object for a NEAT run.
-    p = neat.Population(config) # Om de groep vogeltjes op je beeldscherm te krijgen.
+    p = neat.Population(config) # 14 Om de groep vogeltjes op je beeldscherm te krijgen.
 
     # Add a stdout reporter to show progress in the terminal.
-    p.add_reporter(neat.StdOutReporter(True)) # Aantal statistieken, laat output zien 
+    p.add_reporter(neat.StdOutReporter(True)) # 15 Aantal statistieken, laat output zien 
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
     #p.add_reporter(neat.Checkpointer(5))
@@ -437,5 +437,5 @@ if __name__ == '__main__':
     # here so that the script will run successfully regardless of the
     # current working directory.
     local_dir = os.path.dirname(__file__)
-    config_path = os.path.join(local_dir, 'Config_tijn_daan.txt') # Dit stukje code is een verwijzing naar document: "Config_tijn_daan.txt" hier staan de eigenschappen van de vogeltjes.
+    config_path = os.path.join(local_dir, 'Config_tijn_daan.txt') # 16 Dit stukje code is een verwijzing naar document: "Config_tijn_daan.txt" hier staan de eigenschappen van de vogeltjes.
     run(config_path)
